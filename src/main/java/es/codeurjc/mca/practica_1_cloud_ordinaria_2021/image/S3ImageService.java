@@ -3,6 +3,7 @@ package es.codeurjc.mca.practica_1_cloud_ordinaria_2021.image;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
@@ -22,9 +23,12 @@ public class S3ImageService implements ImageService {
     @Value("${amazon.s3.endpoint}")
     private String ENDPOINT;
 
+    @Value("${amazon.s3.region}")
+    private String REGION;
+
     private final AmazonS3 s3 = AmazonS3ClientBuilder
             .standard()
-            .withRegion(Regions.EU_WEST_1)
+            .withRegion(REGION)
             .build();
 
     @Override
@@ -40,7 +44,7 @@ public class S3ImageService implements ImageService {
         }
 
         PutObjectRequest por = new PutObjectRequest(BUCKET_NAME, fileName, file);
-        //if (isPublic) por.setCannedAcl(CannedAccessControlList.PublicRead);
+        por.setCannedAcl(CannedAccessControlList.PublicRead);
         s3.putObject(por);
 
         return ENDPOINT + fileName;
