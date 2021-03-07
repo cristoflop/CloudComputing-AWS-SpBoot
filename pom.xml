@@ -81,6 +81,12 @@
 			<version>3.0.6</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk</artifactId>
+			<version>1.11.969</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
