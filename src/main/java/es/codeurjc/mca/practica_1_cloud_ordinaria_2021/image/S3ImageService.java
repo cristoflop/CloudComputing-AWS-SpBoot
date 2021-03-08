@@ -48,6 +48,7 @@ public class S3ImageService implements ImageService {
         }
 
         PutObjectRequest por = new PutObjectRequest(BUCKET_NAME, fileName, file);
+        por.setCannedAcl(CannedAccessControlList.PublicRead);
         s3.putObject(por);
 
         return ENDPOINT + fileName;
