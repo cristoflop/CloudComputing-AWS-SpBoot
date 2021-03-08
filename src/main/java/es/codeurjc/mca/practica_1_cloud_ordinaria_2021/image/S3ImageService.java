@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 @Service("storageService")
 @Profile("production")
@@ -38,7 +39,7 @@ public class S3ImageService implements ImageService {
     public String createImage(MultipartFile multiPartFile) {
         createBucketIfNotExists();
 
-        String fileName = multiPartFile.getOriginalFilename();
+        String fileName = "image_" + UUID.randomUUID() + "_" +multiPartFile.getOriginalFilename();
         File file = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
         try {
             multiPartFile.transferTo(file);
