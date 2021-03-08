@@ -26,17 +26,21 @@ public class S3ImageService implements ImageService {
     @Value("${amazon.s3.region}")
     private String REGION;
 
-    private final AmazonS3 s3 = AmazonS3ClientBuilder
-            .standard()
-            .withRegion(REGION)
-            .build();
+    private final AmazonS3 s3;
+
+    public S3ImageService() {
+        this.s3 = AmazonS3ClientBuilder
+                .standard()
+                .withRegion(REGION)
+                .build();
+    }
 
     @Override
     public String createImage(MultipartFile multiPartFile) {
         createBucketIfNotExists();
 
         String fileName = multiPartFile.getOriginalFilename();
-        File file = new File(System.getProperty("java.io.tmpdir")+"/"+fileName);
+        File file = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
         try {
             multiPartFile.transferTo(file);
         } catch (IOException e) {
@@ -51,12 +55,12 @@ public class S3ImageService implements ImageService {
     }
 
     private void createBucketIfNotExists() {
-        if(!s3.doesBucketExistV2(BUCKET_NAME)) s3.createBucket(BUCKET_NAME);
+        if (!s3.doesBucketExistV2(BUCKET_NAME)) s3.createBucket(BUCKET_NAME);
     }
 
     @Override
     public void deleteImage(String image) {
         s3.deleteObject(BUCKET_NAME, image);
     }
-    
+
 }
