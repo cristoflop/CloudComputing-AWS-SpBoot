@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -23,15 +25,12 @@ public class S3ImageService implements ImageService {
     @Value("${amazon.s3.endpoint}")
     private String ENDPOINT;
 
-    @Value("${amazon.s3.region}")
-    private String REGION;
-
     private final AmazonS3 s3;
 
-    public S3ImageService() {
+    public S3ImageService(@Value("${amazon.s3.region}") String region) {
         this.s3 = AmazonS3ClientBuilder
                 .standard()
-                .withRegion(REGION)
+                .withRegion(region)
                 .build();
     }
 
@@ -48,7 +47,6 @@ public class S3ImageService implements ImageService {
         }
 
         PutObjectRequest por = new PutObjectRequest(BUCKET_NAME, fileName, file);
-        por.setCannedAcl(CannedAccessControlList.PublicRead);
         s3.putObject(por);
 
         return ENDPOINT + fileName;
@@ -60,7 +58,8 @@ public class S3ImageService implements ImageService {
 
     @Override
     public void deleteImage(String image) {
-        s3.deleteObject(BUCKET_NAME, image);
+        String[] imageUrl = image.split("/");
+        s3.deleteObject(BUCKET_NAME, imageUrl[imageUrl.length - 1]);
     }
 
 }
